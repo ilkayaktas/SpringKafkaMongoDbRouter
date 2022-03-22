@@ -28,6 +28,8 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
+
+	implementation 'com.google.code.gson:gson:2.9.0'
 }
 
 tasks.named('test') {
