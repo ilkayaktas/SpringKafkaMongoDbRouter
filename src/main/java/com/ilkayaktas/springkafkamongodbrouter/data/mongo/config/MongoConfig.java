@@ -1,4 +1,4 @@
-package com.ilkayaktas.springkafkamongodbrouter.data.mongo;
+package com.ilkayaktas.springkafkamongodbrouter.data.mongo.config;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -32,8 +32,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
 
    @Bean
    public MongoClient mongo() {
-      String connectionUrl = "mongodb://"+mongoProperties.getHost() +":"+mongoProperties.getPort()+"/"+mongoProperties.getDatabase();
-      ConnectionString connectionString = new ConnectionString(connectionUrl);
+      ConnectionString connectionString = new ConnectionString(mongoProperties.getUri());
       MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
               .applyConnectionString(connectionString)
               .build();
@@ -50,4 +49,17 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
    protected String getDatabaseName() {
       return mongoProperties.getDatabase();
    }
+
+
+  /* @Override
+   protected void configureClientSettings(MongoClientSettings.Builder builder) {
+
+      builder.credential(MongoCredential.createCredential(mongoProperties.getUsername(),
+                      mongoProperties.getDatabase(),
+                      mongoProperties.getPassword()))
+              .applyToClusterSettings(settings  -> {
+                 settings.hosts(Collections.singletonList(new ServerAddress(mongoProperties.getHost(), mongoProperties.getPort())));
+
+              });
+   }*/
 }

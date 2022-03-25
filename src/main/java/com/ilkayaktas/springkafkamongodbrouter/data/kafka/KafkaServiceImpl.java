@@ -1,6 +1,7 @@
 package com.ilkayaktas.springkafkamongodbrouter.data.kafka;
 
 import com.google.gson.Gson;
+import com.ilkayaktas.springkafkamongodbrouter.data.mongo.MongoService;
 import com.ilkayaktas.springkafkamongodbrouter.model.KafkaPayload;
 import com.ilkayaktas.springkafkamongodbrouter.model.Message;
 import org.slf4j.Logger;
@@ -27,6 +28,8 @@ public class KafkaServiceImpl implements KafkaService{
    @Autowired
    private KafkaTemplate<String, KafkaPayload> kafkaCustomPayloadTemplate;
 
+   @Autowired
+   private MongoService mongoService;
 
    @Override
    public void publishTopic(String topicName, KafkaPayload message) {
@@ -76,11 +79,16 @@ public class KafkaServiceImpl implements KafkaService{
            topics = "GuvercinTopic",
            containerFactory = "kafkaCustomPayloadListenerContainerFactory")
    public void subscribeTopic(String message) {
-      logger.info("Received KafkaPayload Message in group 1001: " + message);
+      logger.info("Received GuvercinTopic Message in group : " + message);
 
       Message msg = new Gson().fromJson(message, Message.class);
 
-      logger.info(new Gson().toJson(msg));
+
+      try{
+         mongoService.saveMessage(msg);
+      } catch (Exception e){
+         logger.error("Mongo hatası: " + e.getMessage());
+      }
    }
 
 }

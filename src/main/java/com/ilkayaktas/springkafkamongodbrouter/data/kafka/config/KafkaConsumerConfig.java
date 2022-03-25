@@ -42,17 +42,6 @@ public class KafkaConsumerConfig {
    }
 
    @Bean
-   public ConsumerFactory<String, String> consumerCustomPayloadFactory() {
-      Map<String, Object> props = new HashMap<>();
-      props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers());
-      props.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getConsumer().getGroupId());
-      props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-      props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-      props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, kafkaProperties.getConsumer().getAutoOffsetReset());
-      return new DefaultKafkaConsumerFactory<>(props);
-   }
-
-   @Bean
    public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
       ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
       factory.setConsumerFactory(consumerFactory());
@@ -62,8 +51,8 @@ public class KafkaConsumerConfig {
    @Bean
    public ConcurrentKafkaListenerContainerFactory<String, String> kafkaCustomPayloadListenerContainerFactory() {
       ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-      factory.setConsumerFactory(consumerCustomPayloadFactory());
-      factory.setErrorHandler(new KafkaErrorHandler());
+      factory.setConsumerFactory(consumerFactory());
+      factory.setCommonErrorHandler(new KafkaErrorHandler());
       return factory;
    }
 }

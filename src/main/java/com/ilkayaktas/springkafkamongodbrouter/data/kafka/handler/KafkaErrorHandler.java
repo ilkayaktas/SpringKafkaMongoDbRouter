@@ -6,10 +6,9 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.SerializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.kafka.listener.ErrorHandler;
+import org.springframework.kafka.listener.CommonErrorHandler;
 import org.springframework.kafka.listener.MessageListenerContainer;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +16,7 @@ import java.util.regex.Pattern;
  * Created by ilkayaktas on 8.03.2022 at 23:55.
  */
 
-public class KafkaErrorHandler implements ErrorHandler {
+public class KafkaErrorHandler implements CommonErrorHandler {
    private Logger logger = LoggerFactory.getLogger(KafkaErrorHandler.class);
    /**
     * Method prevents serialization error freeze
@@ -47,7 +46,8 @@ public class KafkaErrorHandler implements ErrorHandler {
    }
 
    @Override
-   public void handle(Exception e, ConsumerRecord<?, ?> record, Consumer<?, ?> consumer) {
+   public void handleRecord(Exception e, ConsumerRecord<?, ?> record, Consumer<?, ?> consumer, MessageListenerContainer container) {
+      CommonErrorHandler.super.handleRecord(e, record, consumer, container);
       logger.error("Error in process with Exception {} and the record is {}", e, record);
 
       if (e instanceof SerializationException)
@@ -55,18 +55,8 @@ public class KafkaErrorHandler implements ErrorHandler {
    }
 
    @Override
-   public void handle(Exception e, List<ConsumerRecord<?, ?>> records, Consumer<?, ?> consumer,
-                      MessageListenerContainer container) {
-      logger.error("Error in process with Exception {} and the records are {}", e, records);
-
-      if (e instanceof SerializationException)
-         seekSerializeException(e, consumer);
-
-   }
-
-   @Override
-   public void handle(Exception e, ConsumerRecord<?, ?> record) {
-      logger.error("Error in process with Exception {} and the record is {}", e, record);
+   public boolean remainingRecords() {
+      return CommonErrorHandler.super.remainingRecords();
    }
 
 }

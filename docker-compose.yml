@@ -7,6 +7,7 @@ services:
     hostname: zookeeper
     container_name: zookeeper
     restart: unless-stopped
+    platform: linux/amd64
     networks:
       - mcc-network
     ports:
@@ -22,6 +23,7 @@ services:
     hostname: kafka
     container_name: kafka
     restart: unless-stopped
+    platform: linux/amd64
     networks:
       - mcc-network
     depends_on:
@@ -79,9 +81,6 @@ services:
       retries: 15
     ports:
       - 27017:27017
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin
 
 
   mongo-express:
@@ -95,8 +94,6 @@ services:
     networks:
       - mcc-network
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
-      ME_CONFIG_MONGODB_ADMINPASSWORD: admin
       ME_CONFIG_MONGODB_SERVER: mongodb
       ME_CONFIG_MONGODB_ENABLE_ADMIN: 'true'
       ME_CONFIG_BASICAUTH_USERNAME: admin
